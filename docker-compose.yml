@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: admin
+        uid: 1000
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    image: php8.0
+    container_name: factory_app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    networks:
+      - localhost
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: factory_nginx
+    restart: unless-stopped
+    ports:
+      - 5000:80
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - localhost
+networks:
+  localhost:
+    driver: bridge
